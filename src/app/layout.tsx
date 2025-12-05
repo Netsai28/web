@@ -1,19 +1,8 @@
-import './globals.css'
+import './globals.css' // ✅ ต้อง import แบบนี้ (อยู่ในโฟลเดอร์เดียวกัน)
 import type { Metadata } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
-// โหลดฟอนต์จาก Google Fonts
-const playfair = Playfair_Display({ 
-  subsets: ['latin'], 
-  variable: '--font-serif',
-  display: 'swap',
-})
-
-const inter = Inter({ 
-  subsets: ['latin'], 
-  variable: '--font-sans',
-  display: 'swap',
-})
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Worddee.ai',
@@ -27,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-[#8E9F9F]`}>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }

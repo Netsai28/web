@@ -1,6 +1,5 @@
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,20 +7,21 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        serif: ['var(--font-serif)', 'serif'], // ฟอนต์หัวข้อสวยๆ
-        sans: ['var(--font-sans)', 'sans-serif'], // ฟอนต์เนื้อหา
-      },
       colors: {
         brand: {
-          bg: '#8E9F9F',     // สีพื้นหลังเขียวหม่น (Sage Green) ตาม Figma
-          dark: '#1A2C2C',   // สีปุ่มเขียวเข้ม
-          yellow: '#FDE68A', // สีป้าย Level
-          card: '#FFFFFF',   // สีการ์ดขาว
+          bg: '#8E9F9F',      // สีพื้นหลังเขียวหม่น
+          dark: '#1A2C2C',    // สีปุ่มและตัวหนังสือเข้ม
+          yellow: '#FDE68A',  // สีป้าย Level
+          card: '#FFFFFF',    // สีการ์ดขาว
+          greenLight: '#ECFDF5', 
+          greenText: '#047857',
         }
-      }
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'sans-serif'],
+        serif: ['var(--font-serif)', 'serif'],
+      },
     },
   },
   plugins: [],
 }
-export default config
