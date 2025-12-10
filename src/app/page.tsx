@@ -1,87 +1,93 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Play, CheckCircle, User } from 'lucide-react';
+import { RefreshCw, Play, CheckCircle, Award, User, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
-// --- คลังรูปภาพด่วน (Static Images) ---
-// ใส่ลิงก์รูปจริงไว้เลย ไม่ต้องรอ AI วาด
+// --- ⚡ คลังรูปภาพด่วน (Direct Links) ---
+// ใช้ลิงก์ตรงจาก Unsplash + ปรับขนาดให้เล็ก (w=600) เพื่อให้โหลดไวที่สุด
 const FAST_IMAGES: Record<string, string> = {
-  "serendipity": "https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?auto=format&fit=crop&w=500&q=80",
-  "runway": "https://images.unsplash.com/photo-1570697684870-17f36369932e?auto=format&fit=crop&w=500&q=80",
-  "resilient": "https://images.unsplash.com/photo-1500053766928-d254d666933b?auto=format&fit=crop&w=500&q=80",
-  "ephemeral": "https://images.unsplash.com/photo-1534234828563-02519c22089c?auto=format&fit=crop&w=500&q=80",
-  "establish": "https://images.unsplash.com/photo-1464059728276-d877187d61a9?auto=format&fit=crop&w=500&q=80",
-  "journey": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=500&q=80",
-  "ubiquitous": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=500&q=80",
-  "mellifluous": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=500&q=80",
-  "cognizant": "https://images.unsplash.com/photo-1555449377-5a0d932d7e8d?auto=format&fit=crop&w=500&q=80",
-  "paradigm": "https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=500&q=80",
-  "ambition": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=500&q=80",
-  "perspective": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=500&q=80",
-  "convey": "https://images.unsplash.com/photo-1516574187841-693018957193?auto=format&fit=crop&w=500&q=80",
-  "integrity": "https://images.unsplash.com/photo-1494178270175-e96de2971df9?auto=format&fit=crop&w=500&q=80",
-  "curious": "https://images.unsplash.com/photo-1488998427799-e3362cec87c3?auto=format&fit=crop&w=500&q=80"
+  // Beginner
+  "runway": "https://media.istockphoto.com/id/1256696490/th/%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B8%96%E0%B9%88%E0%B8%B2%E0%B8%A2/%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%A3%E0%B8%B1%E0%B8%99%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A7%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9B%E0%B8%A5%E0%B9%88%E0%B8%B2%E0%B8%AA%E0%B8%99%E0%B8%B2%E0%B8%A1%E0%B8%9A%E0%B8%B4%E0%B8%99%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%A1%E0%B8%B0%E0%B8%95%E0%B8%AD%E0%B8%A2%E0%B8%84%E0%B8%AD%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B5%E0%B8%95%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A1%E0%B8%B5%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%AB%E0%B8%A1%E0%B8%B2%E0%B8%A2%E0%B9%80%E0%B8%9A%E0%B8%A3%E0%B8%81%E0%B8%88%E0%B9%8D%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%99%E0%B8%A1%E0%B8%B2%E0%B8%81%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%AB%E0%B8%A1%E0%B8%B2%E0%B8%A2%E0%B8%AA.jpg?s=612x612&w=0&k=20&c=vjgcillIsT6N0VPNRt3YXh2giCx5QygrnAIP0mK4uTM=",
+  "journey": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80",
+  "happy": "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&q=80",
+  "market": "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80",
+  "build": "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
+  "dream": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&q=80",
+  
+  // Intermediate
+  "resilient": "https://images.unsplash.com/photo-1500053766928-d254d666933b?w=600&q=80",
+  "establish": "https://images.unsplash.com/photo-1464059728276-d877187d61a9?w=600&q=80",
+  "ambition": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&q=80",
+  "perspective": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&q=80",
+  "generate": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80",
+  "unique": "https://images.unsplash.com/photo-1508161773465-48904830881d?w=600&q=80",
+  
+  // Advanced
+  "serendipity": "https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=600&q=80",
+  "ephemeral": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=600&q=80",
+  "ubiquitous": "https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=600&q=80",
+  "mellifluous": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80",
+  "cognizant": "https://images.unsplash.com/photo-1555449377-5a0d932d7e8d?w=600&q=80",
+  "paradigm": "https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=600&q=80",
+  "eloquent": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80",
+  "pragmatic": "https://images.unsplash.com/photo-1512314889357-e15a8c389c27?w=600&q=80"
 };
 
 export default function ChallengePage() {
-  const FALLBACK_WORD = {
-    id: 0,
-    word: "Serendipity",
-    meaning: "Happy accident; occurrence by chance in a happy way.",
-    difficulty: "Advanced",
-    part_of_speech: "noun"
-  };
-
+  const [history, setHistory] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const [word, setWord] = useState<any>(null);
   const [sentence, setSentence] = useState('');
   const [feedback, setFeedback] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
 
+  // 1. ฟังก์ชันดึงคำใหม่
   const fetchWord = async () => {
     setLoading(true);
     setFeedback(null);
     setSentence('');
-    setImageLoading(true);
-
     try {
       const res = await fetch('http://127.0.0.1:8000/api/word');
-      if (!res.ok) throw new Error("API Response not ok");
+      if (!res.ok) throw new Error("Error");
       const data = await res.json();
+      
+      const newHistory = [...history, data];
+      setHistory(newHistory);
+      setCurrentIndex(newHistory.length - 1);
       setWord(data);
-    } catch (error) { 
-      console.error("Backend Failed, using fallback:", error);
-      setWord(FALLBACK_WORD);
-    } finally { 
-      setLoading(false); 
+    } catch (error) { console.error(error); } 
+    finally { setLoading(false); }
+  };
+
+  // 2. ฟังก์ชันย้อนกลับ
+  const handleDoItLater = () => {
+    if (currentIndex > 0) {
+        const prevIndex = currentIndex - 1;
+        setCurrentIndex(prevIndex);
+        setWord(history[prevIndex]);
+        setFeedback(null);
+        setSentence('');
+    } else {
+        fetchWord();
     }
   };
 
   useEffect(() => { fetchWord(); }, []);
 
   const handleSubmit = async () => {
-    if (!sentence.trim()) return;
+    if (!sentence.trim() || !word) return;
     setChecking(true);
     try {
       const res = await fetch('http://127.0.0.1:8000/api/validate-sentence', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ word_text: word?.word || 'Test', sentence })
+        body: JSON.stringify({ word_text: word?.word || '', sentence })
       });
       const data = await res.json();
       setFeedback(data);
-    } catch (error) { 
-      const mockScore = Math.min(10, sentence.split(' ').length * 1.5);
-      setFeedback({
-        score: Math.round(mockScore * 10) / 10,
-        level: mockScore > 7 ? 'Advanced' : 'Beginner',
-        suggestion: "Backend offline: This is a simulated score.",
-        corrected_sentence: sentence
-      });
-    } finally { 
-      setChecking(false); 
-    }
+    } catch (error) { alert("Connection Error"); } 
+    finally { setChecking(false); }
   };
 
   const playAudio = () => {
@@ -92,15 +98,13 @@ export default function ChallengePage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // ✅ ฟังก์ชันเลือกรูปภาพ (เร็วขึ้น 100 เท่า)
-  const getImageUrl = (keyword: string) => {
-    const key = keyword.toLowerCase();
-    // ถ้ามีรูปในคลังด่วน ให้ใช้เลย (ไวมาก)
-    if (FAST_IMAGES[key]) {
-        return FAST_IMAGES[key];
-    }
-    // ถ้าไม่มี ค่อยให้ AI วาด (ช้าหน่อยแต่มีรูปแน่)
-    return `https://image.pollinations.ai/prompt/minimalist%20illustration%20of%20${keyword}%20concept?width=400&height=400&nologo=true&seed=${Math.random()}`;
+  // ⚡ ฟังก์ชันเลือกรูป (ปรับให้ไวที่สุด)
+  const getImageUrl = (k: string) => {
+      const key = k.toLowerCase();
+      // ถ้ามีในคลัง ใช้เลย! (ไม่ต้องรอโหลด)
+      if (FAST_IMAGES[key]) return FAST_IMAGES[key];
+      // ถ้าไม่มีจริงๆ ค่อยให้ AI วาด
+      return `https://image.pollinations.ai/prompt/minimalist%20illustration%20of%20${key}?width=600&height=600&nologo=true`;
   };
 
   return (
@@ -127,26 +131,22 @@ export default function ChallengePage() {
         {loading && !word ? (
            <div className="h-80 flex flex-col items-center justify-center text-gray-400 gap-4">
                <div className="w-12 h-12 border-4 border-gray-200 border-t-[#1A2C2C] rounded-full animate-spin"></div>
-               <p className="font-medium animate-pulse">Connecting to server...</p>
+               <p className="font-medium animate-pulse">Loading word...</p>
            </div>
         ) : (
           <>
             <div className="flex flex-col md:flex-row gap-6 mb-8 relative">
-                 {/* Image Section */}
                  <div className="w-full md:w-48 h-48 bg-gray-100 rounded-2xl overflow-hidden shrink-0 shadow-inner relative group">
-                    {/* เอา Spinner ออกเพื่อให้รูปดูมาไวขึ้น */}
                     <img 
                         src={getImageUrl(word.word)} 
-                        alt={word.word} 
-                        className={`w-full h-full object-cover transition-opacity duration-300`}
-                        onLoad={() => setImageLoading(false)}
+                        className="w-full h-full object-cover transition-opacity duration-500"
+                        loading="eager" // ⚡ สั่งให้โหลดทันทีไม่ต้องรอ
                     />
-                    <button onClick={fetchWord} className="absolute top-2 right-2 bg-white/90 p-2 rounded-full hover:bg-white transition shadow-sm z-20" title="Change Word">
+                    <button onClick={fetchWord} className="absolute top-2 right-2 bg-white/90 p-2 rounded-full hover:bg-white transition shadow-sm z-10" title="New Word">
                         <RefreshCw size={16} className="text-gray-700"/>
                     </button>
                  </div>
                  
-                 {/* Word Info */}
                  <div className="flex-1 border border-gray-100 rounded-2xl p-6 relative bg-gray-50/30">
                     <span className="absolute -top-3 right-4 bg-[#FDE68A] text-[#92400E] px-4 py-1 rounded-full text-xs font-bold shadow-sm uppercase tracking-wide">
                         Level {word.difficulty}
@@ -170,7 +170,6 @@ export default function ChallengePage() {
                  </div>
             </div>
 
-            {/* Input */}
             <div className="mb-8">
                 <textarea
                     value={sentence}
@@ -180,11 +179,14 @@ export default function ChallengePage() {
                 />
             </div>
 
-            {/* Buttons */}
             <div className="flex justify-between items-center">
-                <button onClick={fetchWord} className="px-8 py-3 rounded-full border border-gray-300 text-gray-500 font-bold hover:bg-gray-50 transition-colors hover:text-[#1A2C2C]">
-                    Do it later
+                <button 
+                    onClick={handleDoItLater}
+                    className="px-8 py-3 rounded-full border border-gray-300 text-gray-500 font-bold hover:bg-gray-50 transition-colors hover:text-[#1A2C2C] flex items-center gap-2"
+                >
+                    {currentIndex > 0 ? <ChevronLeft size={18}/> : null} Do it later
                 </button>
+                
                 <button 
                     onClick={handleSubmit}
                     disabled={checking || !sentence.trim()}
@@ -194,7 +196,6 @@ export default function ChallengePage() {
                 </button>
             </div>
 
-            {/* Feedback Popup */}
             {feedback && (
                 <div className="absolute inset-0 bg-white/95 backdrop-blur-md flex items-center justify-center p-6 z-30 animate-in fade-in zoom-in-95 duration-300">
                     <div className="bg-white w-full max-w-lg p-8 rounded-3xl shadow-2xl border border-gray-100 text-center relative">

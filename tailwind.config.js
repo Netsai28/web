@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -7,21 +8,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['var(--font-serif)', 'serif'],
+        sans: ['var(--font-sans)', 'sans-serif'],
+      },
       colors: {
         brand: {
-          bg: '#8E9F9F',      // สีพื้นหลังเขียวหม่น
-          dark: '#1A2C2C',    // สีปุ่มและตัวหนังสือเข้ม
-          yellow: '#FDE68A',  // สีป้าย Level
-          card: '#FFFFFF',    // สีการ์ดขาว
-          greenLight: '#ECFDF5', 
-          greenText: '#047857',
+          bg: '#8E9F9F',
+          dark: '#1A2C2C',
+          yellow: '#FDE68A',
         }
-      },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'sans-serif'],
-        serif: ['var(--font-serif)', 'serif'],
-      },
+      }
     },
   },
   plugins: [],
 }
+export default config
